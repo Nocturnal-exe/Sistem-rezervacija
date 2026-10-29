@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="bs">
 <head>
@@ -54,9 +55,10 @@
   .dugme:hover { background: var(--yellow); color: #000; box-shadow: 0 0 22px var(--yellow); }
   .oznaka { color: var(--pink); letter-spacing: 3px; font-size: 0.9rem; }
   .oznaka.siva { color: #888; }
-</style>
+  </style>
 </head>
 <body>
+ {% include 'termini/ukras.html' %}
   <header>
     <h1>NEON<span>//</span>GYM</h1>
     <div class="podnaslov">SISTEM ZA REZERVACIJU TERMINA</div>

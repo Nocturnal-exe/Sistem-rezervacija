@@ -1,0 +1,25 @@
+{% load static %}
+<style>
+  .ukras {
+    position: fixed; top: 0; bottom: 0; width: 24vw; z-index: 0;
+    background-size: cover; background-position: center; pointer-events: none;
+    opacity: 0.55;
+  }
+  .ukras.lijevo {
+    left: 0; background-image: url("{% static 'termini/zena.jpg' %}");
+    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+    box-shadow: inset 0 0 120px rgba(255,43,214,0.35);
+  }
+  .ukras.desno {
+    right: 0; background-image: url("{% static 'termini/muskarac.jpg' %}");
+    transform: scaleX(-1);
+    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+    box-shadow: inset 0 0 120px rgba(0,240,255,0.35);
+  }
+  header, .traka, main, .kutija { position: relative; z-index: 1; }
+  @media (max-width: 1100px) { .ukras { display: none; } }
+</style>
+<div class="ukras lijevo"></div>
+<div class="ukras desno"></div>

@@ -66,6 +66,7 @@
     {% if user.is_authenticated %}
       <span>// {{ user.first_name|default:user.username }}</span>
       <a href="{% url 'moje_rezervacije' %}">MOJE REZERVACIJE</a>
+      {% if user.uloga == 'trener' %}<a href="{% url 'trener_panel' %}">TRENERSKI PANEL</a>{% endif %}
       <form method="post" action="{% url 'odjava' %}">
         {% csrf_token %}
         <button type="submit" class="link-dugme">ODJAVA</button>

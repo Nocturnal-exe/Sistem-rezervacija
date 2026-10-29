@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trener // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+  .traka { display: flex; justify-content: flex-end; align-items: center; gap: 12px; max-width: 900px; margin: 16px auto 0; padding: 0 16px; font-size: 0.85rem; }
+  .traka a { color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+  .traka form { margin: 0; }
+  .link-dugme { background: none; border: none; color: var(--pink); font-family: inherit; font-size: inherit; cursor: pointer; text-shadow: 0 0 6px var(--pink); padding: 0; }
+  main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+  h2 { color: var(--pink); letter-spacing: 3px; text-shadow: 0 0 10px var(--pink); border-left: 4px solid var(--pink); padding-left: 12px; margin-top: 36px; }
+  .poruka { padding: 12px 16px; margin-bottom: 16px; border: 1px solid var(--cyan); background: rgba(0,240,255,0.08); }
+  .poruka.error { border-color: var(--pink); background: rgba(255,43,214,0.1); color: var(--pink); }
+  .izbor { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .izbor label { color: var(--yellow); letter-spacing: 2px; font-size: 0.85rem; }
+  .izbor input[type=date] {
+    background: #0a0816; color: var(--text); border: 1px solid var(--cyan);
+    padding: 10px 12px; font-family: inherit; font-size: 1rem; color-scheme: dark;
+  }
+  .termin {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--panel); border: 1px solid var(--cyan); padding: 14px 20px; margin-bottom: 12px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12);
+  }
+  .termin.neaktivan { border-color: #444; opacity: 0.55; box-shadow: none; }
+  .vrijeme { color: var(--cyan); font-size: 1.1rem; text-shadow: 0 0 6px var(--cyan); }
+  .termin.neaktivan .vrijeme { color: #888; text-shadow: none; }
+  .klijent { opacity: 0.85; margin-top: 4px; font-size: 0.9rem; }
+  .termin form { margin: 0; }
+  .dugme {
+    background: transparent; color: var(--yellow); border: 1px solid var(--yellow); padding: 10px 22px;
+    font-family: inherit; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    box-shadow: 0 0 10px rgba(245,230,66,0.35); transition: all .15s;
+  }
+  .dugme:hover { background: var(--yellow); color: #000; box-shadow: 0 0 22px var(--yellow); }
+  .dugme.roza { color: var(--pink); border-color: var(--pink); box-shadow: 0 0 10px rgba(255,43,214,0.35); }
+  .dugme.roza:hover { background: var(--pink); color: #000; box-shadow: 0 0 22px var(--pink); }
+  .oznaka { letter-spacing: 3px; font-size: 0.85rem; color: var(--pink); }
+  .oznaka.siva { color: #888; }
+  .oznaka.zuta { color: var(--yellow); }
+  .prazno { text-align: center; color: var(--pink); padding: 30px; border: 1px dashed var(--pink); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>NEON<span>//</span>GYM</h1>
+    <div class="podnaslov">TRENERSKI PANEL</div>
+  </header>
+
+  <div class="traka">
+    <a href="{% url 'pocetna' %}">TERMINI</a>
+    <span>// {{ user.first_name|default:user.username }}</span>
+    <form method="post" action="{% url 'odjava' %}">
+      {% csrf_token %}
+      <button type="submit" class="link-dugme">ODJAVA</button>
+    </form>
+  </div>
+
+  <main>
+    {% for poruka in messages %}
+      <div class="poruka {{ poruka.tags }}">{{ poruka }}</div>
+    {% endfor %}
+
+    <h2>ZAKAZANI TERMINI</h2>
+
+    {% for r in rezervacije %}
+      <div class="termin">
+        <div>
+          <div class="vrijeme">{{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}</div>
+          <div class="klijent">KLIJENT: {{ r.klijent.get_full_name|default:r.klijent.username }}{% if r.klijent.broj_telefona %} // {{ r.klijent.broj_telefona }}{% endif %}</div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="prazno">// NEMA ZAKAZANIH TERMINA //</div>
+    {% endfor %}
+
+    <h2>MOJA DOSTUPNOST</h2>
+
+    <form method="get" class="izbor">
+      <label for="datum">DATUM</label>
+      <input type="date" id="datum" name="datum" value="{{ datum|date:'Y-m-d' }}" min="{{ danas|date:'Y-m-d' }}" onchange="this.form.submit()">
+    </form>
+
+    {% for s in sati %}
+      <div class="termin{% if s.prosao %} neaktivan{% endif %}">
+        <div class="vrijeme">{{ s.pocetak|time:"H:i" }} - {{ s.kraj|time:"H:i" }}</div>
+        {% if s.prosao %}
+          <span class="oznaka siva">PROŠLO</span>
+        {% elif s.rezervisan %}
+          <span class="oznaka zuta">REZERVISAN</span>
+        {% elif s.blokiran %}
+          <form method="post" action="{% url 'odblokiraj' %}">
+            {% csrf_token %}
+            <input type="hidden" name="datum" value="{{ datum|date:'Y-m-d' }}">
+            <input type="hidden" name="sat" value="{{ s.sat }}">
+            <button type="submit" class="dugme">Oslobodi</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'blokiraj' %}">
+            {% csrf_token %}
+            <input type="hidden" name="datum" value="{{ datum|date:'Y-m-d' }}">
+            <input type="hidden" name="sat" value="{{ s.sat }}">
+            <button type="submit" class="dugme roza">Blokiraj</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </main>
+</body>
+</html>

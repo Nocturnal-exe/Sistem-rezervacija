@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Izbor trenera // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+  .traka { display: flex; justify-content: flex-end; align-items: center; gap: 12px; max-width: 900px; margin: 16px auto 0; padding: 0 16px; font-size: 0.85rem; }
+  .traka a { color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+  .traka form { margin: 0; }
+  .link-dugme { background: none; border: none; color: var(--pink); font-family: inherit; font-size: inherit; cursor: pointer; text-shadow: 0 0 6px var(--pink); padding: 0; }
+  main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+  h2 { color: var(--pink); letter-spacing: 3px; text-shadow: 0 0 10px var(--pink); border-left: 4px solid var(--pink); padding-left: 12px; }
+  .info { color: var(--cyan); font-size: 1.1rem; margin-bottom: 20px; text-shadow: 0 0 6px var(--cyan); }
+  .termin {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--panel); border: 1px solid var(--cyan); padding: 14px 20px; margin-bottom: 12px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12); transition: transform .15s, box-shadow .15s;
+  }
+  .termin:hover { transform: translateX(6px); box-shadow: inset 0 0 24px rgba(255,43,214,0.25); border-color: var(--pink); }
+  .termin.zauzet { border-color: #444; opacity: 0.5; box-shadow: none; }
+  .termin.zauzet:hover { transform: none; border-color: #444; box-shadow: none; }
+  .ime { color: var(--cyan); font-size: 1.15rem; text-shadow: 0 0 6px var(--cyan); }
+  .termin.zauzet .ime { color: #888; text-shadow: none; }
+  .stat { font-size: 0.95rem; margin-left: 8px; color: var(--yellow); }
+  .stat.zauzet { color: var(--pink); }
+  .spec { opacity: 0.8; margin-top: 4px; font-size: 0.9rem; }
+  .termin form { margin: 0; }
+  .dugme {
+    background: transparent; color: var(--yellow); border: 1px solid var(--yellow); padding: 10px 22px;
+    font-family: inherit; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    text-decoration: none; box-shadow: 0 0 10px rgba(245,230,66,0.35); transition: all .15s;
+  }
+  .dugme:hover { background: var(--yellow); color: #000; box-shadow: 0 0 22px var(--yellow); }
+  .nazad { display: inline-block; margin-top: 12px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+  .prazno { text-align: center; color: var(--pink); padding: 40px; border: 1px dashed var(--pink); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>NEON<span>//</span>GYM</h1>
+    <div class="podnaslov">SISTEM ZA REZERVACIJU TERMINA</div>
+  </header>
+
+  <div class="traka">
+    <a href="{% url 'moje_rezervacije' %}">MOJE REZERVACIJE</a>
+    <span>// {{ user.first_name|default:user.username }}</span>
+    <form method="post" action="{% url 'odjava' %}">
+      {% csrf_token %}
+      <button type="submit" class="link-dugme">ODJAVA</button>
+    </form>
+  </div>
+
+  <main>
+    <h2>IZABERI TRENERA</h2>
+    <div class="info">{{ datum|date:"d.m.Y" }} &gt; {{ pocetak|time:"H:i" }} - {{ kraj|time:"H:i" }}</div>
+
+    {% for t in treneri %}
+      <div class="termin{% if t.zauzet %} zauzet{% endif %}">
+        <div>
+          <div class="ime">{{ t.ime }}
+            {% if t.zauzet %}<span class="stat zauzet">(zauzet)</span>{% else %}<span class="stat">(slobodan)</span>{% endif %}
+          </div>
+          {% if t.specijalnost %}<div class="spec">{{ t.specijalnost }}</div>{% endif %}
+        </div>
+        {% if not t.zauzet %}
+          <form method="post" action="{% url 'rezervisi' %}">
+            {% csrf_token %}
+            <input type="hidden" name="datum" value="{{ datum|date:'Y-m-d' }}">
+            <input type="hidden" name="sat" value="{{ sat }}">
+            <input type="hidden" name="trener" value="{{ t.id }}">
+            <button type="submit" class="dugme">Izaberi</button>
+          </form>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="prazno">// NEMA TRENERA //</div>
+    {% endfor %}
+
+    <a class="nazad" href="{% url 'pocetna' %}?datum={{ datum|date:'Y-m-d' }}">&lt; NAZAD NA TERMINE</a>
+  </main>
+</body>
+</html>

@@ -70,10 +70,10 @@
 
     <h2>MOJE REZERVACIJE</h2>
 
-    {% for r in rezervacije %}
+       {% for r in rezervacije %}
       <div class="termin{% if r.status != 'aktivna' %} neaktivna{% endif %}">
         <div class="vrijeme">
-          {{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}
+                              {{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}{% if r.termin.trener %} // {{ r.termin.trener.get_full_name|default:r.termin.trener.username }}{% endif %}
         </div>
         {% if r.moze_otkazati %}
           <form method="post" action="{% url 'otkazi' r.id %}">

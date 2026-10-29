@@ -35,7 +35,7 @@ class Termin(models.Model):
     class Meta:
         verbose_name = "Termin"
         verbose_name_plural = "Termini"
-        unique_together = ("datum", "vrijeme_pocetka")
+        unique_together = ("trener", "datum", "vrijeme_pocetka")
 
 
 class Rezervacija(models.Model):

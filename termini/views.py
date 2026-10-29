@@ -27,18 +27,34 @@ def parsiraj_datum(tekst):
         return None
 
 
+def procitaj_sat(tekst):
+    try:
+        sat = int(tekst)
+    except (TypeError, ValueError):
+        return None
+    if POCETNI_SAT <= sat < ZADNJI_SAT:
+        return sat
+    return None
+
+
+def trener_zauzet(trener, datum, pocetak):
+    return Termin.objects.filter(
+        trener=trener, datum=datum, vrijeme_pocetka=pocetak, status="zauzet"
+    ).exists()
+
+
 def pocetna(request):
     danas = timezone.localdate()
     datum = parsiraj_datum(request.GET.get("datum")) or danas
     if datum < danas:
         datum = danas
 
-    zauzeti = set(
-        Termin.objects.filter(datum=datum, status="zauzet")
-        .values_list("vrijeme_pocetka", flat=True)
-    )
-    sada = timezone.localtime().time()
+    broj_trenera = Korisnik.objects.filter(uloga="trener", is_active=True).count()
+    zauzeto_po_satu = {}
+    for t in Termin.objects.filter(datum=datum, status="zauzet", trener__isnull=False):
+        zauzeto_po_satu[t.vrijeme_pocetka] = zauzeto_po_satu.get(t.vrijeme_pocetka, 0) + 1
 
+    sada = timezone.localtime().time()
     sati = []
     for h in range(POCETNI_SAT, ZADNJI_SAT):
         pocetak = datetime.time(h, 0)
@@ -46,7 +62,7 @@ def pocetna(request):
             "sat": h,
             "pocetak": pocetak,
             "kraj": datetime.time(h + 1, 0),
-            "zauzet": pocetak in zauzeti,
+            "zauzet": broj_trenera == 0 or zauzeto_po_satu.get(pocetak, 0) >= broj_trenera,
             "prosao": datum == danas and pocetak <= sada,
         })
 
@@ -54,6 +70,37 @@ def pocetna(request):
         "datum": datum,
         "danas": danas,
         "sati": sati,
+    })
+
+
+@login_required
+def izbor_trenera(request):
+    datum = parsiraj_datum(request.GET.get("datum"))
+    sat = procitaj_sat(request.GET.get("sat"))
+    if datum is None or sat is None:
+        messages.error(request, "Neispravan termin.")
+        return redirect("pocetna")
+
+    pocetak = datetime.time(sat, 0)
+    if datetime.datetime.combine(datum, pocetak) <= datetime.datetime.now():
+        messages.error(request, "Taj termin je već prošao.")
+        return redirect("pocetna")
+
+    treneri = []
+    for trener in Korisnik.objects.filter(uloga="trener", is_active=True).order_by("first_name", "username"):
+        treneri.append({
+            "id": trener.id,
+            "ime": trener.get_full_name() or trener.username,
+            "specijalnost": trener.specijalnost,
+            "zauzet": trener_zauzet(trener, datum, pocetak),
+        })
+
+    return render(request, "termini/izbor_trenera.html", {
+        "datum": datum,
+        "sat": sat,
+        "pocetak": pocetak,
+        "kraj": datetime.time(sat + 1, 0),
+        "treneri": treneri,
     })
 
 
@@ -74,12 +121,12 @@ def registracija(request):
 @require_POST
 def rezervisi(request):
     datum = parsiraj_datum(request.POST.get("datum"))
-    try:
-        sat = int(request.POST.get("sat"))
-    except (TypeError, ValueError):
-        sat = None
+    sat = procitaj_sat(request.POST.get("sat"))
+    trener = Korisnik.objects.filter(
+        id=request.POST.get("trener") or 0, uloga="trener", is_active=True
+    ).first()
 
-    if datum is None or sat is None or not (POCETNI_SAT <= sat < ZADNJI_SAT):
+    if datum is None or sat is None or trener is None:
         messages.error(request, "Neispravan termin.")
         return redirect("pocetna")
 
@@ -94,6 +141,7 @@ def rezervisi(request):
     try:
         with transaction.atomic():
             termin, napravljen = Termin.objects.get_or_create(
+                trener=trener,
                 datum=datum,
                 vrijeme_pocetka=pocetak,
                 defaults={"vrijeme_zavrsetka": kraj, "status": "zauzet"},
@@ -105,7 +153,7 @@ def rezervisi(request):
                 termin.save()
             Rezervacija.objects.create(klijent=request.user, termin=termin)
     except IntegrityError:
-        messages.error(request, "Termin je u međuvremenu zauzet.")
+        messages.error(request, "Taj trener je u međuvremenu zauzet.")
         return redirect(nazad)
 
     messages.success(request, "Termin je uspješno rezervisan.")
@@ -116,7 +164,7 @@ def rezervisi(request):
 def moje_rezervacije(request):
     rezervacije = (
         Rezervacija.objects.filter(klijent=request.user)
-        .select_related("termin")
+        .select_related("termin", "termin__trener")
         .order_by("-termin__datum", "-termin__vrijeme_pocetka")
     )
     sada = datetime.datetime.now()

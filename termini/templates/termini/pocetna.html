@@ -96,12 +96,7 @@
         {% elif s.prosao %}
           <span class="oznaka siva">PROŠLO</span>
         {% else %}
-          <form method="post" action="{% url 'rezervisi' %}">
-            {% csrf_token %}
-            <input type="hidden" name="datum" value="{{ datum|date:'Y-m-d' }}">
-            <input type="hidden" name="sat" value="{{ s.sat }}">
-            <button type="submit" class="dugme">Rezerviši</button>
-          </form>
+                    <a class="dugme" href="{% url 'izbor_trenera' %}?datum={{ datum|date:'Y-m-d' }}&sat={{ s.sat }}">Rezerviši</a>
         {% endif %}
       </div>
     {% endfor %}

@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -12,6 +13,7 @@ from .models import Korisnik, Termin, Rezervacija
 
 POCETNI_SAT = 8
 ZADNJI_SAT = 20
+PO_STRANICI = 10
 
 
 class RegistracijaForma(UserCreationForm):
@@ -162,16 +164,21 @@ def rezervisi(request):
 
 @login_required
 def moje_rezervacije(request):
-    rezervacije = (
+    sve = (
         Rezervacija.objects.filter(klijent=request.user)
         .select_related("termin", "termin__trener")
         .order_by("-termin__datum", "-termin__vrijeme_pocetka")
     )
+    paginator = Paginator(sve, PO_STRANICI)
+    stranica = paginator.get_page(request.GET.get("stranica"))
+    stranica.object_list = list(stranica.object_list)
+
     sada = datetime.datetime.now()
-    for r in rezervacije:
+    for r in stranica.object_list:
         pocetak = datetime.datetime.combine(r.termin.datum, r.termin.vrijeme_pocetka)
         r.moze_otkazati = r.status == "aktivna" and pocetak > sada
-    return render(request, "termini/moje.html", {"rezervacije": rezervacije})
+
+    return render(request, "termini/moje.html", {"rezervacije": stranica})
 
 
 @login_required

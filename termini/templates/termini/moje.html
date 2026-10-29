@@ -46,6 +46,14 @@
   .oznaka { letter-spacing: 3px; font-size: 0.85rem; color: var(--yellow); }
   .oznaka.siva { color: #888; }
   .prazno { text-align: center; color: var(--pink); padding: 40px; border: 1px dashed var(--pink); }
+  .stranice { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+  .stranice a, .stranice span {
+    min-width: 40px; padding: 8px 12px; text-align: center;
+    border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none;
+    box-shadow: 0 0 8px rgba(0,240,255,0.25); transition: all .15s;
+  }
+  .stranice a:hover { background: var(--cyan); color: #000; box-shadow: 0 0 18px var(--cyan); }
+  .stranice span.trenutna { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 12px rgba(255,43,214,0.5); }
 </style>
 </head>
 <body>
@@ -70,10 +78,10 @@
 
     <h2>MOJE REZERVACIJE</h2>
 
-       {% for r in rezervacije %}
+    {% for r in rezervacije %}
       <div class="termin{% if r.status != 'aktivna' %} neaktivna{% endif %}">
         <div class="vrijeme">
-                              {{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}{% if r.termin.trener %} // {{ r.termin.trener.get_full_name|default:r.termin.trener.username }}{% endif %}
+          {{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}{% if r.termin.trener %} - Trener: {{ r.termin.trener.get_full_name|default:r.termin.trener.username }}{% if r.termin.trener.specijalnost %} ({{ r.termin.trener.specijalnost }}){% endif %}{% endif %}
         </div>
         {% if r.moze_otkazati %}
           <form method="post" action="{% url 'otkazi' r.id %}">
@@ -87,6 +95,26 @@
     {% empty %}
       <div class="prazno">// NEMAŠ REZERVACIJA //</div>
     {% endfor %}
+
+    {% if rezervacije.paginator.num_pages > 1 %}
+      <div class="stranice">
+        {% if rezervacije.has_previous %}
+          <a href="?stranica={{ rezervacije.previous_page_number }}">&lt;</a>
+        {% endif %}
+
+        {% for broj in rezervacije.paginator.page_range %}
+          {% if broj == rezervacije.number %}
+            <span class="trenutna">{{ broj }}</span>
+          {% else %}
+            <a href="?stranica={{ broj }}">{{ broj }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if rezervacije.has_next %}
+          <a href="?stranica={{ rezervacije.next_page_number }}">&gt;</a>
+        {% endif %}
+      </div>
+    {% endif %}
   </main>
 </body>
 </html>

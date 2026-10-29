@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -126,4 +125,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
 AUTH_USER_MODEL = 'termini.Korisnik'
+LOGIN_URL = 'prijava'
+LOGIN_REDIRECT_URL = 'pocetna'
+LOGOUT_REDIRECT_URL = 'pocetna'

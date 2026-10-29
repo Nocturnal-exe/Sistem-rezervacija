@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moje rezervacije // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+  .traka { display: flex; justify-content: flex-end; align-items: center; gap: 12px; max-width: 900px; margin: 16px auto 0; padding: 0 16px; font-size: 0.85rem; }
+  .traka a { color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+  .traka form { margin: 0; }
+  .link-dugme { background: none; border: none; color: var(--pink); font-family: inherit; font-size: inherit; cursor: pointer; text-shadow: 0 0 6px var(--pink); padding: 0; }
+  main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+  h2 { color: var(--pink); letter-spacing: 3px; text-shadow: 0 0 10px var(--pink); border-left: 4px solid var(--pink); padding-left: 12px; }
+  .poruka { padding: 12px 16px; margin-bottom: 16px; border: 1px solid var(--cyan); background: rgba(0,240,255,0.08); }
+  .poruka.error { border-color: var(--pink); background: rgba(255,43,214,0.1); color: var(--pink); }
+  .termin {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--panel); border: 1px solid var(--cyan); padding: 14px 20px; margin-bottom: 12px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12);
+  }
+  .termin.neaktivna { border-color: #444; opacity: 0.55; box-shadow: none; }
+  .vrijeme { color: var(--cyan); font-size: 1.1rem; text-shadow: 0 0 6px var(--cyan); }
+  .termin.neaktivna .vrijeme { color: #888; text-shadow: none; }
+  .termin form { margin: 0; }
+  .dugme {
+    background: transparent; color: var(--pink); border: 1px solid var(--pink); padding: 10px 22px;
+    font-family: inherit; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,43,214,0.35); transition: all .15s;
+  }
+  .dugme:hover { background: var(--pink); color: #000; box-shadow: 0 0 22px var(--pink); }
+  .oznaka { letter-spacing: 3px; font-size: 0.85rem; color: var(--yellow); }
+  .oznaka.siva { color: #888; }
+  .prazno { text-align: center; color: var(--pink); padding: 40px; border: 1px dashed var(--pink); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>NEON<span>//</span>GYM</h1>
+    <div class="podnaslov">SISTEM ZA REZERVACIJU TERMINA</div>
+  </header>
+
+  <div class="traka">
+    <a href="{% url 'pocetna' %}">TERMINI</a>
+    <span>// {{ user.first_name|default:user.username }}</span>
+    <form method="post" action="{% url 'odjava' %}">
+      {% csrf_token %}
+      <button type="submit" class="link-dugme">ODJAVA</button>
+    </form>
+  </div>
+
+  <main>
+    {% for poruka in messages %}
+      <div class="poruka {{ poruka.tags }}">{{ poruka }}</div>
+    {% endfor %}
+
+    <h2>MOJE REZERVACIJE</h2>
+
+    {% for r in rezervacije %}
+      <div class="termin{% if r.status != 'aktivna' %} neaktivna{% endif %}">
+        <div class="vrijeme">
+          {{ r.termin.datum|date:"d.m.Y" }} &gt; {{ r.termin.vrijeme_pocetka|time:"H:i" }} - {{ r.termin.vrijeme_zavrsetka|time:"H:i" }}
+        </div>
+        {% if r.moze_otkazati %}
+          <form method="post" action="{% url 'otkazi' r.id %}">
+            {% csrf_token %}
+            <button type="submit" class="dugme">Otkaži</button>
+          </form>
+        {% else %}
+          <span class="oznaka{% if r.status != 'aktivna' %} siva{% endif %}">{{ r.get_status_display|upper }}</span>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="prazno">// NEMAŠ REZERVACIJA //</div>
+    {% endfor %}
+  </main>
+</body>
+</html>

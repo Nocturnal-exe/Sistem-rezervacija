@@ -21,8 +21,8 @@ class Termin(models.Model):
     STATUSI = [("slobodan", "Slobodan"), ("zauzet", "Zauzet")]
 
     trener = models.ForeignKey(
-        Korisnik, on_delete=models.CASCADE, related_name="termini",
-        limit_choices_to={"uloga": "trener"},
+        Korisnik, on_delete=models.SET_NULL, related_name="termini",
+        limit_choices_to={"uloga": "trener"}, null=True, blank=True,
     )
     datum = models.DateField()
     vrijeme_pocetka = models.TimeField()
@@ -30,11 +30,12 @@ class Termin(models.Model):
     status = models.CharField(max_length=10, choices=STATUSI, default="slobodan")
 
     def __str__(self):
-        return f"{self.datum} {self.vrijeme_pocetka} ({self.trener.username})"
+        return f"{self.datum} {self.vrijeme_pocetka}"
 
     class Meta:
         verbose_name = "Termin"
         verbose_name_plural = "Termini"
+        unique_together = ("datum", "vrijeme_pocetka")
 
 
 class Rezervacija(models.Model):
@@ -49,7 +50,9 @@ class Rezervacija(models.Model):
         Korisnik, on_delete=models.CASCADE, related_name="rezervacije",
         limit_choices_to={"uloga": "klijent"},
     )
-    termin = models.OneToOneField(Termin, on_delete=models.CASCADE)
+    termin = models.ForeignKey(
+        Termin, on_delete=models.CASCADE, related_name="rezervacije",
+    )
     datum_kreiranja = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=12, choices=STATUSI, default="aktivna")
 

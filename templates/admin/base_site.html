@@ -1,0 +1,294 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:"NEON//GYM" }}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  :root,
+  html[data-theme="light"],
+  html[data-theme="dark"] {
+    --primary: #0a0816;
+    --secondary: #100d1f;
+    --accent: #ff2bd6;
+    --primary-fg: #00f0ff;
+
+    --body-fg: #d6e4ff;
+    --body-bg: #05040b;
+    --body-quiet-color: #8a93b8;
+    --body-loud-color: #ffffff;
+
+    --header-color: #00f0ff;
+    --header-branding-color: #00f0ff;
+    --header-bg: #0a0816;
+    --header-link-color: #00f0ff;
+
+    --breadcrumbs-fg: #8a93b8;
+    --breadcrumbs-link-fg: #00f0ff;
+    --breadcrumbs-bg: #100d1f;
+
+    --link-fg: #00f0ff;
+    --link-hover-color: #ff2bd6;
+    --link-selected-fg: #f5e642;
+
+    --hairline-color: #1f1a3a;
+    --border-color: #2a2250;
+    --error-fg: #ff2bd6;
+
+    --message-success-bg: #06251f;
+    --message-warning-bg: #2a2406;
+    --message-error-bg: #2a0620;
+
+    --darkened-bg: #0d0a1c;
+    --selected-bg: #1a0f3a;
+    --selected-row: #1a0f3a;
+
+    --button-fg: #000000;
+    --button-bg: #00f0ff;
+    --button-hover-bg: #ff2bd6;
+    --default-button-bg: #f5e642;
+    --default-button-hover-bg: #ff2bd6;
+    --close-button-bg: #444466;
+    --close-button-hover-bg: #666699;
+    --delete-button-bg: #ff2bd6;
+    --delete-button-hover-bg: #ff6be6;
+
+    --object-tools-fg: #000000;
+    --object-tools-bg: #00f0ff;
+    --object-tools-hover-bg: #ff2bd6;
+  }
+
+  body, input, select, textarea, button {
+    font-family: "Consolas", "Courier New", monospace;
+  }
+
+  body {
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      #05040b;
+  }
+
+  #header {
+    border-bottom: 1px solid #00f0ff;
+    box-shadow: 0 0 25px rgba(0,240,255,0.35);
+  }
+
+  #site-name a, #site-name a:link, #site-name a:visited {
+    color: #00f0ff;
+    letter-spacing: 6px;
+    text-shadow: 0 0 8px #00f0ff, 0 0 24px #00f0ff;
+  }
+
+  h1, h2, h3 {
+    color: #ff2bd6;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255,43,214,0.7);
+  }
+
+  .module {
+    border: 1px solid #00f0ff;
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12);
+    background: #0a0816;
+  }
+
+  .module caption, .module h2, .inline-group h2 {
+    background: #100d1f;
+    color: #ff2bd6;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ff2bd6;
+  }
+
+  input[type=text], input[type=password], input[type=email], input[type=number],
+  input[type=date], input[type=time], select, textarea, .vTextField {
+    background: #0a0816;
+    color: #d6e4ff;
+    border: 1px solid #00f0ff;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ff2bd6;
+    box-shadow: 0 0 12px rgba(255,43,214,0.5);
+    outline: none;
+  }
+
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 0 10px rgba(0,240,255,0.4);
+  }
+
+  .button:hover, input[type=submit]:hover {
+    box-shadow: 0 0 22px #ff2bd6;
+  }
+
+  #changelist-filter {
+    background: #0a0816;
+    border: 1px solid #00f0ff;
+  }
+
+  #changelist-filter h3 { color: #f5e642; text-shadow: none; }
+
+  tr:hover td, tr.selected td { background: #1a0f3a; }
+
+  .object-tools a {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 0 10px rgba(0,240,255,0.4);
+  }
+  #nav-sidebar { display: none; }
+
+  .main > .content {
+    margin: 0 auto;
+    max-width: 1100px;
+    width: 100%;
+  }
+
+  #content { padding: 20px 24px; }
+
+  .breadcrumbs {
+    padding-left: calc((100% - 1100px) / 2 + 24px);
+  }
+
+  #header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #user-tools { margin: 8px 0 0; text-align: center; }
+  #content-related { background: transparent !important; padding: 0 !important; }
+  #content-related .module { margin-bottom: 0 !important; }
+  .meni-dugme {
+    background: transparent; color: #00f0ff; border: 1px solid #00f0ff;
+    padding: 2px 10px; cursor: pointer; font-family: inherit;
+    box-shadow: 0 0 8px rgba(0,240,255,0.35); transition: all .15s;
+  }
+  .meni-dugme:hover, .meni-dugme.otvoren { background: #ff2bd6; border-color: #ff2bd6; color: #000; box-shadow: 0 0 14px #ff2bd6; }
+  tr.meni-red { display: none; }
+  tr.meni-red.otvoren { display: table-row; }
+  tr.meni-red td { background: #0d0a1c; padding: 10px 14px; border-left: 3px solid #ff2bd6; }
+  .meni-lista { display: flex; flex-wrap: wrap; gap: 10px; }
+  .meni-lista a {
+    padding: 6px 14px; border: 1px solid #f5e642; color: #f5e642;
+    letter-spacing: 1px; text-transform: uppercase; font-size: 0.8rem;
+    box-shadow: 0 0 8px rgba(245,230,66,0.3); transition: all .15s;
+  }
+  .meni-lista a:hover { background: #f5e642; color: #000; text-decoration: none; box-shadow: 0 0 16px #f5e642; }
+  #changelist-filter {
+    border: none !important;
+    border-left: 1px solid #00f0ff !important;
+    background: transparent !important;
+  }
+  #changelist .changelist-form-container { display: flex; align-items: stretch; }
+  #changelist-filter { align-self: stretch; min-height: 100%; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:"NEON//GYM" }}</a></div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+{% block extrahead %}{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var meniji = {
+    'model-korisnik': [
+      ['Svi korisnici', ''],
+      ['Klijenti', '?uloga__exact=klijent'],
+      ['Treneri', '?uloga__exact=trener'],
+      ['Administratori', '?uloga__exact=administrator']
+    ],
+    'model-rezervacija': [
+      ['Sve rezervacije', ''],
+      ['Aktivne', '?status__exact=aktivna'],
+      ['Otkazane', '?status__exact=otkazana'],
+      ['Završene', '?status__exact=zavrsena'],
+      ['Propuštene', '?status__exact=propustena']
+    ],
+    'model-termin': [
+      ['Svi termini', ''],
+      ['Zauzeti', '?status__exact=zauzet'],
+      ['Slobodni', '?status__exact=slobodan']
+    ]
+  };
+
+  Object.keys(meniji).forEach(function (klasa) {
+    var red = document.querySelector('tr.' + klasa);
+    if (!red) return;
+    var veza = red.querySelector('th a');
+    if (!veza) return;
+    var baza = veza.getAttribute('href');
+
+    var td = document.createElement('td');
+    var dugme = document.createElement('button');
+    dugme.type = 'button';
+    dugme.className = 'meni-dugme';
+    dugme.textContent = '\u25BC';
+    td.appendChild(dugme);
+    red.appendChild(td);
+
+    var podred = document.createElement('tr');
+    podred.className = 'meni-red';
+    var celija = document.createElement('td');
+    celija.colSpan = 10;
+    var lista = document.createElement('div');
+    lista.className = 'meni-lista';
+    meniji[klasa].forEach(function (stavka) {
+      var a = document.createElement('a');
+      a.href = baza + stavka[1];
+      a.textContent = stavka[0];
+      lista.appendChild(a);
+    });
+    celija.appendChild(lista);
+    podred.appendChild(celija);
+    red.parentNode.insertBefore(podred, red.nextSibling);
+
+    dugme.addEventListener('click', function () {
+      var otvoren = podred.classList.toggle('otvoren');
+      dugme.classList.toggle('otvoren', otvoren);
+      dugme.textContent = otvoren ? '\u25B2' : '\u25BC';
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  var prevodi = {
+    'Run': 'Pokreni',
+    'Show counts': 'Prikaži brojeve',
+    'Hide counts': 'Sakrij brojeve',
+    'Recent actions': 'Nedavne radnje',
+    'My actions': 'Moje radnje',
+    'By uloga': 'Po ulozi',
+    'By aktivan': 'Po aktivnosti',
+    'By status': 'Po statusu',
+    'By datum': 'Po datumu',
+    'By trener': 'Po treneru',
+    'By termin datum': 'Po datumu termina',
+    'By termin trener': 'Po treneru termina',
+    'Yes': 'Da',
+    'No': 'Ne',
+      'All': 'Svi',
+    'View site': 'Početna stranica',
+    'VIEW SITE': 'Početna stranica',
+    'Odaberi objekat klase Korisnik za izmjenu': 'Korisnici',
+    'Odaberi objekat klase Rezervacija za izmjenu': 'Rezervacije',
+    'Odaberi objekat klase Termin za izmjenu': 'Termini',
+    'Dodaj objekat klase Korisnik': 'Dodaj korisnika',
+    'Dodaj objekat klase Rezervacija': 'Dodaj rezervaciju',
+    'Dodaj objekat klase Termin': 'Dodaj termin'
+  };
+  var hodac = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  var cvor;
+  while ((cvor = hodac.nextNode())) {
+    var tekst = cvor.nodeValue.trim();
+    if (prevodi[tekst]) {
+      cvor.nodeValue = cvor.nodeValue.replace(tekst, prevodi[tekst]);
+    } else if (tekst.indexOf('Select an option') !== -1) {
+      cvor.nodeValue = cvor.nodeValue.replace('Select an option', 'Izaberi radnju');
+    }
+  }
+});
+</script>
+{% endblock %}

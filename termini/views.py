@@ -10,11 +10,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from .models import Korisnik, Termin, Rezervacija
-from .pomocno import zavrsi_prosle
+from .pomocno import zavrsi_prosle, broj_aktivnih
 
 POCETNI_SAT = 8
 ZADNJI_SAT = 20
 PO_STRANICI = 10
+MAX_AKTIVNIH = 3
 
 
 class RegistracijaForma(UserCreationForm):
@@ -139,6 +140,10 @@ def rezervisi(request):
 
     if datetime.datetime.combine(datum, pocetak) <= datetime.datetime.now():
         messages.error(request, "Taj termin je već prošao.")
+        return redirect(nazad)
+
+    if broj_aktivnih(request.user) >= MAX_AKTIVNIH:
+        messages.error(request, f"Možeš imati najviše {MAX_AKTIVNIH} aktivne rezervacije.")
         return redirect(nazad)
 
     try:

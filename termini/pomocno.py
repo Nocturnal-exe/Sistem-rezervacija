@@ -11,3 +11,8 @@ def zavrsi_prosle():
         Q(termin__datum__lt=sada.date())
         | Q(termin__datum=sada.date(), termin__vrijeme_zavrsetka__lte=sada.time())
     ).update(status="zavrsena")
+
+
+def broj_aktivnih(klijent):
+    zavrsi_prosle()
+    return Rezervacija.objects.filter(klijent=klijent, status="aktivna").count()

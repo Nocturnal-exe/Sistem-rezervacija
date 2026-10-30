@@ -1,0 +1,35 @@
+<style>
+  body { padding-bottom: 64px; }
+  .izreke {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 56px; z-index: 10;
+    overflow: hidden; background: rgba(7,6,15,0.92);
+    border-top: 1px solid #00f0ff; box-shadow: 0 0 22px rgba(0,240,255,0.35);
+  }
+  .izreke .izreka {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    gap: 14px; padding: 0 16px; text-align: center; opacity: 0;
+    font-family: "Consolas", "Courier New", monospace; letter-spacing: 1px; font-size: 0.92rem;
+    color: #d6e4ff; animation: izreka-valjak 25s infinite;
+  }
+  .izreke .izreka b { color: #ff2bd6; text-shadow: 0 0 8px #ff2bd6; white-space: nowrap; }
+  .izreke .izreka:nth-child(1) { animation-delay: 0s; }
+  .izreke .izreka:nth-child(2) { animation-delay: 5s; }
+  .izreke .izreka:nth-child(3) { animation-delay: 10s; }
+  .izreke .izreka:nth-child(4) { animation-delay: 15s; }
+  .izreke .izreka:nth-child(5) { animation-delay: 20s; }
+  @keyframes izreka-valjak {
+    0%    { transform: translateY(-100%); opacity: 0; }
+    2%    { transform: translateY(0);     opacity: 1; }
+    18%   { transform: translateY(0);     opacity: 1; }
+    20%   { transform: translateY(100%);  opacity: 0; }
+    100%  { transform: translateY(100%);  opacity: 0; }
+  }
+  @media (max-width: 700px) { .izreke .izreka { flex-direction: column; gap: 2px; font-size: 0.78rem; } }
+</style>
+<div class="izreke">
+  <div class="izreka"><span>"Zadnja tri ili četiri ponavljanja su ona koja grade mišić."</span><b>// Arnold Schwarzenegger</b></div>
+  <div class="izreka"><span>"Mrzio sam svaku minutu treninga, ali sam rekao: ne odustaj. Pati sada i ostatak života živi kao šampion."</span><b>// Muhammad Ali</b></div>
+  <div class="izreka"><span>"Svi žele biti bodybuilderi, ali niko ne želi dizati teške tegove."</span><b>// Ronnie Coleman</b></div>
+  <div class="izreka"><span>"Vježbanje je kralj, ishrana je kraljica. Spoji ih i imaš kraljevstvo."</span><b>// Jack LaLanne</b></div>
+  <div class="izreka"><span>"Snaga ne dolazi iz pobjeđivanja. Tvoje borbe razvijaju tvoju snagu."</span><b>// Arnold Schwarzenegger</b></div>
+</div>

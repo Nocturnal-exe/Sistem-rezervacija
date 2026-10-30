@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from .models import Korisnik, Termin, Rezervacija
+from .pomocno import zavrsi_prosle
 
 POCETNI_SAT = 8
 ZADNJI_SAT = 20
@@ -164,6 +165,7 @@ def rezervisi(request):
 
 @login_required
 def moje_rezervacije(request):
+    zavrsi_prosle()
     sve = (
         Rezervacija.objects.filter(klijent=request.user)
         .select_related("termin", "termin__trener")

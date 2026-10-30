@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O nama // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  .hero { position: relative; min-height: 45vh; display: flex; align-items: center; justify-content: center; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(rgba(7,6,15,0.5), rgba(7,6,15,1)),
+            url("{% static 'termini/onama2.jpg' %}") center 30% / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  }
+  .hero h2 {
+    position: relative; z-index: 1; margin: 0; font-size: 2.4rem; letter-spacing: 6px;
+    text-transform: uppercase; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 28px var(--pink);
+  }
+
+  .uvod { max-width: 1100px; margin: 0 auto; padding: 50px 16px 30px; display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 40px; align-items: start; }
+  .uvod h3 { margin: 0 0 12px; color: var(--cyan); letter-spacing: 4px; font-size: 1rem; text-shadow: 0 0 10px var(--cyan); }
+  .slogan { font-size: 1.5rem; color: var(--pink); letter-spacing: 3px; text-shadow: 0 0 12px var(--pink); margin-bottom: 18px; }
+  .uvod p { line-height: 1.8; opacity: 0.85; margin: 0; }
+  .link { color: var(--yellow); text-decoration: none; letter-spacing: 2px; text-shadow: 0 0 8px var(--yellow); }
+  .link:hover { color: var(--pink); text-shadow: 0 0 12px var(--pink); }
+  .programi { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+  .programi ul { margin: 0; padding-left: 18px; line-height: 2; opacity: 0.9; }
+  .programi ul li::marker { color: var(--pink); }
+  .programi img {
+    width: 110px; height: 110px; object-fit: cover; border-radius: 50%; flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(0,240,255,0.55), 0 0 36px rgba(255,43,214,0.25);
+  }
+
+  .kartice { max-width: 1100px; margin: 0 auto; padding: 30px 16px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .kartica {
+    background: var(--panel); border: 1px solid var(--cyan); position: relative;
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12); transition: transform .15s, border-color .15s;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+  .kartica:hover { transform: translateY(-6px); border-color: var(--pink); }
+  .kartica .slika { height: 220px; background-size: cover; background-position: center; position: relative; }
+  .kartica .slika::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 40%, var(--panel)); }
+  .kartica .krug {
+  .kartica:nth-child(3) .slika { background-position: center 0%; }
+    position: absolute; left: 50%; top: 220px; transform: translate(-50%, -50%); z-index: 2;
+    width: 64px; height: 64px; border-radius: 50%; background: var(--pink); color: #000;
+    display: flex; align-items: center; justify-content: center; font-size: 1.7rem;
+    box-shadow: 0 0 20px var(--pink), 0 0 40px rgba(255,43,214,0.5);
+  }
+  .kartica .tijelo { padding: 46px 22px 30px; text-align: center; }
+  .kartica h4 { margin: 0 0 12px; color: var(--cyan); letter-spacing: 3px; text-shadow: 0 0 8px var(--cyan); }
+  .kartica p { margin: 0; line-height: 1.8; opacity: 0.85; font-size: 0.92rem; }
+
+  .nazad { display: block; text-align: center; margin-bottom: 40px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  @media (max-width: 900px) {
+    .uvod, .kartice { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  {% include 'termini/zaglavlje.html' %}
+
+  <section class="hero">
+    <h2>O nama</h2>
+  </section>
+
+  <section class="uvod">
+    <div>
+      <h3>NEON//GYM</h3>
+      <div class="slogan">{{ o_nama.slogan }}</div>
+      <a class="link" href="{% url 'kontakt' %}">KONTAKT &rarr;</a>
+    </div>
+
+    <div>
+      <h3>O NAMA</h3>
+      <p>{{ o_nama.tekst }}</p>
+    </div>
+
+    <div>
+      <h3>PROGRAMI</h3>
+      <div class="programi">
+        <ul>
+          {% for p in o_nama.programi %}<li>{{ p }}</li>{% endfor %}
+        </ul>
+                <span class="logo-krug"><img src="{% static 'termini/logo.png' %}" alt="NEON//GYM"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="kartice">
+    {% for k in o_nama.kartice %}
+      <div class="kartica">
+        <div class="slika" style="background-image: url('{% static 'termini/'|add:k.slika %}');"></div>
+        <div class="krug">{{ k.ikona|safe }}</div>
+        <div class="tijelo">
+          <h4>{{ k.naslov }}</h4>
+          <p>{{ k.tekst }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+
+  <a class="nazad" href="{% url 'pocetna' %}">&lt; NAZAD NA TERMINE</a>
+  {% include 'termini/podnozje.html' %}
+</body>
+</html>

@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontakt // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  .hero {
+    position: relative; min-height: 45vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(rgba(7,6,15,0.5), rgba(7,6,15,1)),
+      url("{% static 'termini/kontakt.jpg' %}") center / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  }
+  .hero h2 {
+    position: relative; z-index: 1;
+    margin: 0; font-size: 2.4rem; letter-spacing: 6px; text-transform: uppercase; color: var(--pink);
+    text-shadow: 0 0 10px var(--pink), 0 0 28px var(--pink);
+  }
+
+  .sadrzaj {
+    max-width: 1000px; margin: 0 auto; padding: 40px 16px 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+  }
+  .sadrzaj h3 { margin: 0 0 6px; color: var(--cyan); letter-spacing: 4px; text-shadow: 0 0 10px var(--cyan); }
+  .sadrzaj .opis { color: var(--yellow); letter-spacing: 2px; font-size: 0.85rem; margin-bottom: 24px; }
+  .podatak { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; letter-spacing: 1px; }
+  .podatak .ikona { color: var(--pink); text-shadow: 0 0 8px var(--pink); font-size: 1.2rem; width: 24px; text-align: center; }
+  .logo { margin-top: 30px; }
+  .logo img {
+    width: 150px; height: 150px; object-fit: cover; display: block;
+    border-radius: 50%;
+    box-shadow: 0 0 22px rgba(0,240,255,0.55), 0 0 40px rgba(255,43,214,0.25);
+  }
+
+  .mapa {
+    min-height: 320px; display: flex; align-items: center; justify-content: center; text-align: center;
+    border: 1px dashed var(--cyan); background: var(--panel); color: var(--cyan);
+    letter-spacing: 3px; box-shadow: inset 0 0 24px rgba(0,240,255,0.12);
+  }
+  .mapa iframe { width: 100%; height: 320px; border: 0; }
+  .nazad { display: block; text-align: center; margin-bottom: 40px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  @media (max-width: 800px) { .sadrzaj { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  {% include 'termini/zaglavlje.html' %}
+
+  <section class="hero">
+    <h2>Kontaktirajte nas</h2>
+  </section>
+
+  <section class="sadrzaj">
+    <div>
+      <h3>KONTAKT INFORMACIJE</h3>
+      <div class="opis">POSJETITE NAS ILI NAM PIŠITE</div>
+
+      <div class="podatak"><span class="ikona">&#9742;</span><span>{{ kontakt.telefon }}</span></div>
+      <div class="podatak"><span class="ikona">&#9993;</span><span>{{ kontakt.email }}</span></div>
+      <div class="podatak"><span class="ikona">&#9906;</span><span>{{ kontakt.adresa }}</span></div>
+      <div class="podatak"><span class="ikona">&#9719;</span><span>{{ kontakt.radno_vrijeme }}</span></div>
+
+            <div class="logo"><span class="logo-krug"><img src="{% static 'termini/logo.png' %}" alt="NEON//GYM"></span></div>
+    </div>
+
+    <div class="mapa">
+      <!-- Kasnije ovdje zalijepi Google Maps iframe umjesto ovog teksta -->
+      MAPA // PLACEHOLDER
+    </div>
+  </section>
+
+  <a class="nazad" href="{% url 'pocetna' %}">&lt; NAZAD NA TERMINE</a>
+</body>
+  {% include 'termini/podnozje.html' %}
+</html>

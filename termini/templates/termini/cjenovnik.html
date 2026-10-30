@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cjenovnik // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  .pozadina {
+    position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: min(1100px, 100%); z-index: 0; pointer-events: none;
+    background:
+      linear-gradient(rgba(7,6,15,0.45), rgba(7,6,15,0.75)),
+      url("{% static 'termini/cjenovnik.jpg' %}") center / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 70%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  }
+  header, .hero, main, .nazad { position: relative; z-index: 1; }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  .hero { min-height: 22vh; display: flex; align-items: center; justify-content: center; }
+  .hero h2 {
+    margin: 0; font-size: 2.4rem; letter-spacing: 6px;
+    text-transform: uppercase; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 28px var(--pink);
+  }
+
+  main { max-width: 900px; margin: 0 auto; padding: 10px 16px 40px; }
+  .paket {
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    background: rgba(16,13,31,0.88); border: 1px solid var(--cyan); padding: 22px 26px; margin-bottom: 18px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12); transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .paket:hover { transform: translateX(6px); box-shadow: inset 0 0 24px rgba(255,43,214,0.25); border-color: var(--pink); }
+  .paket h3 { margin: 0 0 6px; color: var(--cyan); letter-spacing: 4px; font-size: 1.2rem; text-shadow: 0 0 8px var(--cyan); }
+  .paket .opis { opacity: 0.8; font-size: 0.9rem; max-width: 380px; line-height: 1.6; }
+  .cijene { list-style: none; margin: 0; padding: 0; min-width: 240px; }
+  .cijene li { display: flex; justify-content: space-between; gap: 24px; padding: 4px 0; border-bottom: 1px dashed rgba(0,240,255,0.2); }
+  .cijene li:last-child { border-bottom: none; }
+  .cijene .period { opacity: 0.85; }
+  .cijene .iznos { color: var(--yellow); text-shadow: 0 0 8px rgba(245,230,66,0.6); letter-spacing: 1px; }
+  .napomena { text-align: center; opacity: 0.6; font-size: 0.85rem; margin: 10px 0 30px; }
+  .nazad { display: block; text-align: center; margin-bottom: 40px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  @media (max-width: 700px) {
+    .paket { flex-direction: column; align-items: flex-start; }
+    .cijene { width: 100%; min-width: 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="pozadina"></div>
+
+  {% include 'termini/zaglavlje.html' %}
+
+  <section class="hero">
+    <h2>Cjenovnik</h2>
+  </section>
+
+  <main>
+    {% for p in paketi %}
+      <div class="paket">
+        <div>
+          <h3>{{ p.naziv }}</h3>
+          <div class="opis">{{ p.opis }}</div>
+        </div>
+        <ul class="cijene">
+          {% for period, iznos in p.cijene %}
+            <li><span class="period">{{ period }}</span><span class="iznos">{{ iznos }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+
+    <div class="napomena">Cijene su informativne i podložne promjeni.</div>
+    <a class="nazad" href="{% url 'pocetna' %}">&lt; NAZAD NA TERMINE</a>
+  </main>
+
+  {% include 'termini/podnozje.html' %}
+</body>
+</html>

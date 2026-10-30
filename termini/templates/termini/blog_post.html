@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ post.naslov }} // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  article { max-width: 820px; margin: 40px auto; padding: 0 16px; }
+  .slika-post { height: 360px; background: #0a0816 center / cover no-repeat; border: 1px solid var(--cyan); box-shadow: 0 0 24px rgba(0,240,255,0.25); margin-bottom: 26px; }
+  .datum { opacity: 0.6; font-size: 0.85rem; margin-bottom: 10px; letter-spacing: 2px; }
+  article h2 { margin: 0 0 24px; color: var(--pink); letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 10px var(--pink); }
+  .tekst { line-height: 1.9; opacity: 0.92; white-space: pre-line; }
+  .nazad { display: block; text-align: center; margin: 40px 0; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+</style>
+</head>
+<body>
+  {% include 'termini/zaglavlje.html' %}
+
+  <article>
+    {% if post.slika %}<div class="slika-post" style="background-image: url('{{ post.slika.url }}');"></div>{% endif %}
+    <div class="datum">{{ post.datum|date:"d.m.Y" }}</div>
+    <h2>{{ post.naslov }}</h2>
+    <div class="tekst">{{ post.tekst }}</div>
+  </article>
+
+  <a class="nazad" href="{% url 'blog' %}">&lt; NAZAD NA BLOG</a>
+
+  {% include 'termini/podnozje.html' %}
+</body>
+</html>

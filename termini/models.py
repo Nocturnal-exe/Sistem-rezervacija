@@ -62,3 +62,20 @@ class Rezervacija(models.Model):
     class Meta:
         verbose_name = "Rezervacija"
         verbose_name_plural = "Rezervacije"
+
+
+class Post(models.Model):
+    naslov = models.CharField(max_length=200)
+    slika = models.ImageField(upload_to="blog/", blank=True)
+    kratak_opis = models.CharField(max_length=300, blank=True)
+    tekst = models.TextField()
+    datum = models.DateField(auto_now_add=True)
+    objavljen = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.naslov
+
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Postovi"
+        ordering = ["-datum", "-id"]

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views, trener, stranice, cijene
+from . import views, trener, stranice, cijene, blog
 
 urlpatterns = [
     path("", views.pocetna, name="pocetna"),
@@ -24,4 +24,6 @@ urlpatterns = [
     path("kontakt/", stranice.kontakt, name="kontakt"),
     path("o-nama/", stranice.o_nama, name="o_nama"),
     path("cjenovnik/", cijene.cjenovnik, name="cjenovnik"),
+    path("blog/", blog.blog_lista, name="blog"),
+    path("blog/<int:post_id>/", blog.blog_post, name="blog_post"),
 ]

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  .naslov-stranice { text-align: center; margin: 40px 0 10px; font-size: 2.2rem; letter-spacing: 6px; text-transform: uppercase; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 28px var(--pink); }
+
+  .mreza { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .kartica {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: var(--panel); border: 1px solid var(--cyan);
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12); transition: transform .15s, border-color .15s;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+  .kartica:hover { transform: translateY(-6px); border-color: var(--pink); }
+  .kartica .slika { height: 220px; background: #0a0816 center / cover no-repeat; position: relative; display: flex; align-items: center; justify-content: center; color: var(--cyan); letter-spacing: 3px; opacity: 0.95; }
+  .kartica .slika::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 50%, var(--panel)); }
+  .kartica .tijelo { padding: 22px; }
+  .kartica h3 { margin: 0 0 12px; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; font-size: 1.05rem; text-shadow: 0 0 8px var(--cyan); }
+  .kartica p { margin: 0 0 16px; line-height: 1.7; opacity: 0.85; font-size: 0.9rem; }
+  .kartica .vise { color: var(--yellow); letter-spacing: 2px; font-size: 0.85rem; text-shadow: 0 0 8px rgba(245,230,66,0.6); }
+  .kartica .datum { opacity: 0.6; font-size: 0.8rem; margin-bottom: 8px; }
+  .nazad { display: block; text-align: center; margin-bottom: 40px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  @media (max-width: 900px) { .mreza { grid-template-columns: 1fr; } }
+  .stranice { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 0 0 30px; flex-wrap: wrap; }
+  .stranice a, .stranice span {
+    min-width: 40px; padding: 8px 12px; text-align: center;
+    border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none;
+    box-shadow: 0 0 8px rgba(0,240,255,0.25); transition: all .15s;
+  }
+  .stranice a:hover { background: var(--cyan); color: #000; box-shadow: 0 0 18px var(--cyan); }
+  .stranice span.trenutna { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 12px rgba(255,43,214,0.5); }
+</style>
+</head>
+<body>
+  {% include 'termini/zaglavlje.html' %}
+
+  <h2 class="naslov-stranice">Blog</h2>
+
+  <section class="mreza">
+    {% for p in postovi %}
+      <a class="kartica" href="{% url 'blog_post' p.id %}">
+        <div class="slika"{% if p.slika %} style="background-image: url('{{ p.slika.url }}');"{% endif %}></div>
+        <div class="tijelo">
+          <div class="datum">{{ p.datum|date:"d.m.Y" }}</div>
+          <h3>{{ p.naslov }}</h3>
+          <p>{{ p.kratak_opis }}</p>
+          <span class="vise">PROČITAJ VIŠE &rarr;</span>
+        </div>
+      </a>
+    {% empty %}
+      {% for p in primjeri %}
+        <div class="kartica">
+          <div class="slika">PLACEHOLDER</div>
+          <div class="tijelo">
+            <h3>{{ p.naslov }}</h3>
+            <p>{{ p.kratak_opis }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </section>
+  {% if postovi.paginator.num_pages > 1 %}
+    <div class="stranice">
+      {% if postovi.has_previous %}<a href="?stranica={{ postovi.previous_page_number }}">&lt;</a>{% endif %}
+      {% for broj in postovi.paginator.page_range %}
+        {% if broj == postovi.number %}<span class="trenutna">{{ broj }}</span>{% else %}<a href="?stranica={{ broj }}">{{ broj }}</a>{% endif %}
+      {% endfor %}
+      {% if postovi.has_next %}<a href="?stranica={{ postovi.next_page_number }}">&gt;</a>{% endif %}
+    </div>
+  {% endif %}
+
+  <a class="nazad" href="{% url 'pocetna' %}">&lt; NAZAD NA TERMINE</a>
+
+  {% include 'termini/podnozje.html' %}
+</body>
+</html>

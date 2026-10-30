@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from .models import Korisnik, Termin, Rezervacija
+from .models import Korisnik, Termin, Rezervacija, Post
 
 admin.site.site_header = "NEON//GYM"
 admin.site.site_title = "NEON//GYM"
@@ -46,6 +46,13 @@ class RezervacijaAdmin(admin.ModelAdmin):
     @admin.display(description="Trener", ordering="termin__trener")
     def trener(self, obj):
         return obj.termin.trener
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ("naslov", "datum", "objavljen")
+    list_filter = ("objavljen", "datum")
+    search_fields = ("naslov", "kratak_opis", "tekst")
 
 
 admin.site.unregister(Group)

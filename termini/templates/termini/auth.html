@@ -106,9 +106,10 @@
       <button type="submit">{{ dugme }}</button>
     </form>
 
-    <div class="link">
+        <div class="link">
       {% if naslov == "PRIJAVA" %}
         Nemaš nalog? <a href="{% url 'registracija' %}">Registruj se</a>
+        <br><a href="{% url 'password_reset' %}">Zaboravljena lozinka?</a>
       {% else %}
         Već imaš nalog? <a href="{% url 'prijava' %}">Prijavi se</a>
       {% endif %}

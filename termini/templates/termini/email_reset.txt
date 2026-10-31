@@ -1,0 +1,8 @@
+Zdravo {{ user.get_username }},
+
+Dobili smo zahtjev za promjenu lozinke na NEON//GYM.
+Klikni na link ispod da postaviš novu lozinku:
+
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Ako ovo nisi tražio ti, slobodno ignoriši ovaj email.

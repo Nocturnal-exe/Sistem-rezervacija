@@ -54,6 +54,7 @@ class Rezervacija(models.Model):
         Termin, on_delete=models.CASCADE, related_name="rezervacije",
     )
     datum_kreiranja = models.DateTimeField(auto_now_add=True)
+    podsjetnik_poslan = models.BooleanField(default=False)
     status = models.CharField(max_length=12, choices=STATUSI, default="aktivna")
 
     def __str__(self):

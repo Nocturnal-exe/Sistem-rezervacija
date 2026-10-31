@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profil // NEON GYM</title>
+<style>
+  :root { --bg:#07060f; --panel:#100d1f; --cyan:#00f0ff; --pink:#ff2bd6; --yellow:#f5e642; --text:#d6e4ff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    background:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at top, #1a0f3a 0%, var(--bg) 60%);
+  }
+  header { padding: 28px 24px; text-align: center; border-bottom: 1px solid var(--cyan); box-shadow: 0 0 25px rgba(0,240,255,0.35); }
+  header h1 { margin: 0; font-size: 2.2rem; letter-spacing: 6px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 24px var(--cyan); }
+  header h1 span { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 0 24px var(--pink); }
+  .podnaslov { margin-top: 8px; color: var(--yellow); letter-spacing: 3px; font-size: 0.85rem; }
+
+  main { max-width: 900px; margin: 30px auto; padding: 0 16px 40px; }
+  .naslov-stranice { text-align: center; font-size: 2.2rem; letter-spacing: 6px; text-transform: uppercase; color: var(--pink); text-shadow: 0 0 10px var(--pink), 0 0 28px var(--pink); margin: 0 0 24px; }
+  .poruka { padding: 12px 16px; margin-bottom: 16px; border: 1px solid var(--cyan); background: rgba(0,240,255,0.08); }
+  .poruka.error { border-color: var(--pink); background: rgba(255,43,214,0.1); color: var(--pink); }
+
+  .dvije { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .kutija {
+    background: var(--panel); border: 1px solid var(--cyan); padding: 26px 24px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: inset 0 0 18px rgba(0,240,255,0.12);
+  }
+  .kutija h2 { margin: 0 0 6px; color: var(--cyan); letter-spacing: 4px; font-size: 1.05rem; text-shadow: 0 0 8px var(--cyan); }
+  label { display: block; margin-top: 14px; color: var(--yellow); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+  input {
+    width: 100%; margin-top: 6px; padding: 10px 12px; background: #0a0816; border: 1px solid var(--cyan);
+    color: var(--text); font-family: inherit; font-size: 1rem; outline: none;
+  }
+  input:focus { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,43,214,0.5); }
+  .pomoc { font-size: 0.72rem; opacity: 0.6; margin-top: 4px; }
+  .pomoc ul { margin: 4px 0 0; padding-left: 18px; }
+  ul.errorlist { color: var(--pink); font-size: 0.8rem; list-style: none; padding: 0; margin: 6px 0 0; }
+  button {
+    width: 100%; margin-top: 22px; padding: 12px; background: transparent; color: var(--yellow);
+    border: 1px solid var(--yellow); font-family: inherit; letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; box-shadow: 0 0 10px rgba(245,230,66,0.35); transition: all .15s;
+  }
+  button:hover { background: var(--yellow); color: #000; box-shadow: 0 0 22px var(--yellow); }
+  .nazad { display: block; text-align: center; margin: 30px 0; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  @media (max-width: 800px) { .dvije { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  {% include 'termini/zaglavlje.html' %}
+
+  <main>
+    <h2 class="naslov-stranice">Profil</h2>
+
+    {% for poruka in messages %}
+      <div class="poruka {{ poruka.tags }}">{{ poruka }}</div>
+    {% endfor %}
+
+    <div class="dvije">
+      <form method="post" class="kutija">
+        {% csrf_token %}
+        <h2>MOJI PODACI</h2>
+        {% for polje in forma %}
+          <label for="{{ polje.id_for_label }}">{{ polje.label }}</label>
+          {{ polje }}
+          {{ polje.errors }}
+        {% endfor %}
+        <button type="submit" name="spremi_profil">Sačuvaj</button>
+      </form>
+
+      <form method="post" class="kutija">
+        {% csrf_token %}
+        <h2>PROMJENA LOZINKE</h2>
+        {% for polje in lozinka %}
+          <label for="{{ polje.id_for_label }}">{{ polje.label }}</label>
+          {{ polje }}
+          {{ polje.errors }}
+          {% if polje.help_text %}<div class="pomoc">{{ polje.help_text|safe }}</div>{% endif %}
+        {% endfor %}
+        <button type="submit" name="promijeni_lozinku">Promijeni lozinku</button>
+      </form>
+    </div>
+
+    <a class="nazad" href="{% url 'pocetna' %}">&lt; NAZAD NA TERMINE</a>
+  </main>
+
+  {% include 'termini/podnozje.html' %}
+</body>
+</html>

@@ -65,6 +65,7 @@
     {% if user.is_authenticated %}
       <span>// {{ user.first_name|default:user.username }}</span>
       {% if user.is_staff %}<a href="{% url 'admin:index' %}">ADMIN</a>{% endif %}
+      <a href="{% url 'profil' %}">PROFIL</a>
       <a href="{% url 'moje_rezervacije' %}">MOJE REZERVACIJE</a>
       {% if user.uloga == 'trener' %}<a href="{% url 'trener_panel' %}">TRENERSKI PANEL</a>{% endif %}
       <form method="post" action="{% url 'odjava' %}">
